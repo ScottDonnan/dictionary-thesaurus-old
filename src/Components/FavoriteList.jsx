@@ -1,36 +1,19 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Card from "../styled/card"
 
-function FavoriteList({handleDeleteFavorite, favList, grabFavorites, isLoggedIn, loggedInUser}) {
-    
+function FavoriteList({handleDeleteFavorite, loggedInUser, favoriteWords}) {
 
-    useEffect(()=>{
-        if(isLoggedIn === true){ 
-        grabFavorites()} 
-    }, [isLoggedIn]) 
-    
-    
-
-
-    let listOfFavorites = 
-    favList.map(fav=>
-        <>
-            <li key={fav.id}>
-                {fav.name}
-                <button onClick={() => handleDeleteFavorite(fav.favoriteID)}>❌</button>
-            </li>
-        </>
-    )
-        
-    
-    if (isLoggedIn === false){
-        listOfFavorites = [null]
-        }
-
+    let listOfFavorites =
+        favoriteWords.map(word => {
+        return <li key={word.id}>
+                    {word.name}
+                    <button onClick={() => handleDeleteFavorite(word)}>❌</button>
+                </li>
+        })
     
     return(
         <Card>
-            <h2>{isLoggedIn ? `${loggedInUser.username}'s Favorite Words` : 'Favorite Words'}</h2>
+            <h2>{loggedInUser ? `${loggedInUser.username}'s Favorite Words` : 'Favorite Words'}</h2>
             {listOfFavorites}
         </Card>
     )

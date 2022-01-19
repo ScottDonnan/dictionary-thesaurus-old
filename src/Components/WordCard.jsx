@@ -2,58 +2,46 @@ import { useState } from "react"
 import Card from "../styled/card"
 import styled from "styled-components"
 
-function WordCard({searchWord, addFavorite, isLoggedIn}) {
-    const [isLiked, setIsLiked] = useState(true)
-    // const [likedWord, setLikedWord] = useState('')
+function WordCard({handleDeleteFavorite, searchWord, loggedInUser, addWordToFavorites, favoriteWords, setSearchWord}) {
 
-   const subdirectory = searchWord.hwi.prs[0].sound.audio[0]
-   const soundFile = searchWord.hwi.prs[0].sound.audio 
-   const audioElement = new Audio(`https://media.merriam-webster.com/audio/prons/en/us/mp3/${subdirectory}/${soundFile}.mp3`)
+    const subdirectory = searchWord.hwi?.prs[0].sound.audio[0]
+    const soundFile = searchWord.hwi?.prs[0].sound.audio 
+    const audioElement = new Audio(`https://media.merriam-webster.com/audio/prons/en/us/mp3/${subdirectory}/${soundFile}.mp3`)
 
-   let isImage = true
-   let image
+    let isImage = true
+    let image
 
-   const searchWordOrg = searchWord.hwi.hw
-   const searchWordName = searchWordOrg.replace('*', '')
+    const searchWordOrg = searchWord.hwi.hw
+    const searchWordName = searchWordOrg.replace('*', '')
 
-   if(searchWord.art?.artid) {
+    if(searchWord.art?.artid) {
     isImage = true
     const imageDirectory = searchWord.art.artid 
     image = `https://www.merriam-webster.com/assets/mw/static/art/dict/${imageDirectory}.gif`
-   } else {
-       isImage = false
-   }
+    } else {
+    isImage = false
+    }
     
-   const likedObj = { name: searchWordName,
-                      pronunciation: searchWord.hwi.prs[0].mw
-                    }
+    const wordToBeFavorite = { name: searchWord.meta.id, pronunciation: searchWord.hwi.prs[0].mw }
 
-   const handleLike = () => {
-       if(isLoggedIn === false) {
-           alert("Please Log In")
-        } else {
-            setIsLiked(!isLiked)
-        }
-       
-       if (isLiked === true){
-           addFavorite(likedObj)
-       } else if (isLiked === false){
-           console.log('nothing to add here!')
-       }
-   }
+    const playAudio = () => { audioElement.play() }
+
    
+    const favNameList = favoriteWords.map(fav => fav.name)
+    const favoriteButton = <div>{favNameList?.includes(searchWord.meta.id) ? <LikeButton onClick={() => findFavoriteToDelete(wordToBeFavorite.name)}>'❤️'</LikeButton> : 
+        <LikeButton onClick={() => addWordToFavorites(wordToBeFavorite, loggedInUser)}>'🤍'</LikeButton>}</div>
    
-
-
-   const playAudio = () => {
-       audioElement.play()
-   }
-
+    function findFavoriteToDelete(favoriteToRemove) {
+       const favorite = favoriteWords.find(fav => fav.name === favoriteToRemove)
+       handleDeleteFavorite(favorite)
+    }
   
    let count = 1
     return(
         <Card>
-            <h2>{searchWordName} <LikeButton onClick={handleLike}>{isLiked ? '🤍' : '❤️' }</LikeButton></h2>
+            <h2>{searchWordName} 
+                {loggedInUser ? favoriteButton : null}
+            </h2>
             <h3>{searchWord.hwi.prs[0].mw}</h3>
             <PlayButton onClick={playAudio}>Say Word</PlayButton>
             {searchWord.shortdef.map((word, index) => {
@@ -61,7 +49,8 @@ function WordCard({searchWord, addFavorite, isLoggedIn}) {
                 console.log('counter', count)
                 count = count + 1
                 })}
-            {isImage ? <img src={image}/> : null}            
+            {isImage ? <img src={image}/> : null}
+            <button onClick={() => setSearchWord('')}>minimize</button>            
         </Card>
     )
 }

@@ -12,8 +12,6 @@ function Search ({getWordDefinition, getWordSynonym, setSearchWord, setThesaurus
 
     function handleSubmit(e) {
         e.preventDefault()
-        setSearchWord(value => value = '')
-        setThesaurusSearchWord(value => value = '')
         searchSwitcher ? getWordDefinition(searchValue) : getWordSynonym(searchValue)
     }
 
@@ -50,6 +48,7 @@ const Form = styled.form `
     display: flex;
     font-family: Helvetica, sans-serif;
     border-radius: 15px;
+    width: 66%;
 `
 const ButtonStyled = styled.button `
     font-family: Helvetica, sans-serif;
@@ -96,8 +95,8 @@ const SearchBar = styled.input `
     font-family: Helvetica, sans-serif;
     display: flex;
     border-radius: 15px;
-    width: 500px;
-    height: 50px;
+    width: 75%;
+    height: 75%;
     font-size: 30px;
 
 `
